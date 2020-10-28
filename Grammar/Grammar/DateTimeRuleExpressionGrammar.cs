@@ -3,19 +3,34 @@ using System;
 
 namespace TargetingTestApp.Grammar
 {
-    internal class DateTimeRuleExpressionGrammar : ParametizedExpressionGrammar<DateTime, OperatorExtensions.None, DateTimeRuleExpressionGrammar.DateTimeFunctions>, IRuleExpressionParser
+    /// <summary>
+    /// Grammar for rules that are based on DateTime properties.
+    /// </summary>
+    /// <remarks>All numeric values are treated as nullable date times.</remarks>
+    internal class DateTimeRuleExpressionGrammar : ParametizedExpressionGrammar<DateTime?, OperatorExtensions.None, DateTimeRuleExpressionGrammar.DateTimeFunctions>, IRuleExpressionParser
     {
         public DateTimeRuleExpressionGrammar(ILogger<DateTimeRuleExpressionGrammar> logger) : base(logger)
         {
         }
 
-        public Type RuleParameterType => typeof(DateTime);
+        public Type RuleParameterType => typeof(DateTime?);
 
+        /// <summary>
+        /// Datetimes that are returned or accepted should always be considered as DateTime? and the null case scenario should be explicitly handled.
+        /// </summary>
         public class DateTimeFunctions : FunctionExtensions
         {
-            public static string MonthOf(DateTime eventDate)
+            /// <summary>
+            /// Gets the textual representation of the month of a specific DateTime
+            /// </summary>
+            /// <param name="eventDate">The datetime to analyse.</param>
+            /// <returns>The name of the month that the event occurred on.</returns>
+            public static string MonthOf(DateTime? eventDate)
             {
-                return eventDate.Month switch
+                if (!eventDate.HasValue)
+                    return string.Empty;
+
+                return eventDate.Value.Month switch
                 {
                     1 => "January",
                     2 => "February",
@@ -33,17 +48,31 @@ namespace TargetingTestApp.Grammar
                 };
             }
 
-            public static DateTime Now()
+            /// <summary>
+            /// Gets the current UTC DateTime.
+            /// </summary>
+            /// <returns>The current UTC date time.</returns>
+            public static DateTime? Now()
             {
-                return DateTime.Now;
+                return DateTime.UtcNow;
             }
 
-            public static double DayRangeFromDate(DateTime eventDate, bool forwardsOnly)
+            /// <summary>
+            /// Returns the number of days from the current UTC date to a specific date time.
+            /// </summary>
+            /// <param name="eventDate">The date time to compare to now.</param>
+            /// <param name="lookForwards"> Whether to looks forwards or backwards.</param>
+            /// <returns>The number of days between the two days.</returns>
+            public static double? DayRangeFromDate(DateTime? eventDate, bool lookForwards)
             {
-                var eventDay = eventDate.DayOfYear;
+                //TODO - Handle leap years.
+                if (!eventDate.HasValue)
+                    return double.NaN;
+
+                var eventDay = eventDate.Value.DayOfYear;
                 var currentDay = DateTime.Now.DayOfYear;
 
-                if (forwardsOnly)
+                if (lookForwards)
                 {
                     if (currentDay < eventDay)
                         currentDay += 365;

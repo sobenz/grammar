@@ -5,12 +5,16 @@ using System.Text;
 
 namespace TargetingTestApp.Grammar
 {
-    internal class NumericRuleExpressionGrammar : ParametizedExpressionGrammar<double, OperatorExtensions.None, FunctionExtensions.None>, IRuleExpressionParser
+    /// <summary>
+    /// Grammar for rules that are based on Numeric properties.
+    /// </summary>
+    /// <remarks>All numeric values are treated as nullable doubles.</remarks>
+    internal class NumericRuleExpressionGrammar : ParametizedExpressionGrammar<double?, OperatorExtensions.None, FunctionExtensions.None>, IRuleExpressionParser
     {
         public NumericRuleExpressionGrammar(ILogger<NumericRuleExpressionGrammar> logger) : base(logger)
         {
         }
 
-        public Type RuleParameterType => typeof(double);
+        public Type RuleParameterType => typeof(double?);
     }
 }

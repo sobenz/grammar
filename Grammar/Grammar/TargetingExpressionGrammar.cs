@@ -10,6 +10,9 @@ using TargetingTestApp.Evaluation;
 
 namespace TargetingTestApp.Grammar
 {
+    /// <summary>
+    /// Grammar for generic top level targeting expressions. 
+    /// </summary>
     internal class TargetingExpressionGrammar : LogicalExpressionGrammar<OperatorExtensions.None, FunctionExtensions.None>
     {
         private readonly IEnumerable<ICriterion> _criteria;
@@ -55,7 +58,7 @@ namespace TargetingTestApp.Grammar
 
         private Expression BuildRuleExpression(Rule rule)
         {
-            var val = Expression.Convert(Expression.Call(_evaluator, _evaluatorMethods[nameof(ITargetEvaluator.GetRuleTarget)], Expression.Constant(rule.EvaluationTarget)), rule.EvaluationType);
+            var val = Expression.TypeAs(Expression.Call(_evaluator, _evaluatorMethods[nameof(ITargetEvaluator.GetRuleTarget)], Expression.Constant(rule.EvaluationTarget)), rule.EvaluationType);
 
             _ruleParsers.TryGetValue(rule.EvaluationType, out IRuleExpressionParser ruleParser);
             if (ruleParser == null)

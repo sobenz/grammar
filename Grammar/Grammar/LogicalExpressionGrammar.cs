@@ -14,9 +14,6 @@ namespace TargetingTestApp.Grammar
         where TExtensionOperators : OperatorExtensions 
         where TExtensionFunctions : FunctionExtensions
     {
-        private static readonly Type[] integralTypes = { typeof(byte), typeof(short), typeof(ushort), typeof(int), typeof(uint), typeof(long), typeof(ulong) };
-        private static readonly Type[] floatingTypes = { typeof(float), typeof(double), typeof(decimal) };
-        private static readonly Type[] numericTypes = integralTypes.Concat(floatingTypes).ToArray();
         protected readonly ILogger _logger;
 
         public LogicalExpressionGrammar(ILogger<LogicalExpressionGrammar<TExtensionOperators, TExtensionFunctions>> logger)
@@ -61,8 +58,11 @@ namespace TargetingTestApp.Grammar
 
         protected internal virtual Parser<Expression> BoolConstant => from boolConst in Parse.IgnoreCase("true").Or(Parse.IgnoreCase("false")).Text().Token()
                                                                       select Expression.Constant(bool.Parse(boolConst));
+
+        //All constants returned as nullable types as specific rules may return nullable values as well, and this prevents constant conversion when 
+        //performing comparison operations.
         protected internal virtual Parser<Expression> NumericConstant => from numericConst in Parse.Regex("-?[0-9]+(.[0-9]+)?", "Numeric pattern").Token()
-                                                                         select Expression.Constant(double.Parse(numericConst));
+                                                                         select Expression.Constant(double.Parse(numericConst), typeof(double?)); 
         protected internal virtual Parser<Char> EscapeChar => from marker in Parse.Char('\\')
                                                               from escapedChar in Parse.AnyChar
                                                               select escapedChar;
@@ -77,7 +77,7 @@ namespace TargetingTestApp.Grammar
                                                                             from operand in Operand
                                                                             select Expression.Not(operand)).Token();
 
-        protected internal virtual Parser<Expression> BinaryOperation => Parse.ChainOperator(BinaryOperators, NegationOperation.Or(ExtensionOperator).Or(Operand), Expression.MakeBinary);
+        protected internal virtual Parser<Expression> BinaryOperation => Parse.ChainOperator(BinaryOperators, NegationOperation.Or(ExtensionOperator).Or(Operand), (t,l,r) => Expression.MakeBinary(t,l,r));
 
         protected internal virtual Parser<Expression> Operand => (from lparen in Parse.Char('(')
                                                                   from expression in Parse.Ref(() => BinaryOperation)

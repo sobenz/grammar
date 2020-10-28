@@ -18,9 +18,9 @@ namespace TargetingTestApp
                 new Tag { ReferenceCode = "DEF" },
                 new Tag { ReferenceCode = "GHI" },
                 new Segment { ReferenceCode = "SEG1", SegmentExpression = "(ABC AND DEF)" },
-                new Rule { ReferenceCode = "Age20To50", EvaluationTarget = "Age", EvaluationType = typeof(double), EvaluationCriterion = "(x > 20) AND (x <= 50)" },
+                new Rule { ReferenceCode = "Age20To50", EvaluationTarget = "Age", EvaluationType = typeof(double?), EvaluationCriterion = "(x > 20) AND (x <= 50)" },
                 new Rule { ReferenceCode = "BenOffers", EvaluationTarget = "Name", EvaluationType = typeof(string), EvaluationCriterion = "x regexmatches \".*gh.*\"" },
-                new Rule { ReferenceCode = "BornThisWeek", EvaluationTarget = "DateOfBirth", EvaluationType = typeof(DateTime), EvaluationCriterion = "DayRangeFromDate(x, false) <= 7" }
+                new Rule { ReferenceCode = "BornThisWeek", EvaluationTarget = "DateOfBirth", EvaluationType = typeof(DateTime?), EvaluationCriterion = "DayRangeFromDate(x, false) <= 7" }
             };
             return criteria;
         }

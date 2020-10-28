@@ -30,7 +30,7 @@ namespace TargetingTestApp
             var services = collection.BuildServiceProvider();
 
             var parser = new TargetExpressionParser(TestCriteria.All, services.GetService<TargetingExpressionGrammar>());
-            var expr = parser.GenerateExpression("NOT (BenOffers AND Age20To50)");
+            var expr = parser.GenerateExpression("NOT BornThisWeek");
             var func = expr.Compile();
             var evaluator = new ConsumerEvaluator(TestConsumer.Get());
             var result = func(evaluator);
