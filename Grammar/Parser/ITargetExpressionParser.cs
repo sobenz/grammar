@@ -2,7 +2,7 @@
 using System.Linq.Expressions;
 using TargetingTestApp.Evaluation;
 
-namespace TargetingTestApp
+namespace TargetingTestApp.Parser
 {
     public interface ITargetExpressionParser
     {

@@ -4,7 +4,7 @@ using System;
 namespace TargetingTestApp.Grammar
 {
     /// <summary>
-    /// Grammar for rules that are based on DateTime properties.
+    /// Grammar for rules that are based on DateTime properties.  Additional functions for processing date time data are also defined.
     /// </summary>
     /// <remarks>All numeric values are treated as nullable date times.</remarks>
     internal class DateTimeRuleExpressionGrammar : ParametizedExpressionGrammar<DateTime?, OperatorExtensions.None, DateTimeRuleExpressionGrammar.DateTimeFunctions>, IRuleExpressionParser
@@ -15,6 +15,7 @@ namespace TargetingTestApp.Grammar
 
         public Type RuleParameterType => typeof(DateTime?);
 
+        #region Extended Functions
         /// <summary>
         /// Datetimes that are returned or accepted should always be considered as DateTime? and the null case scenario should be explicitly handled.
         /// </summary>
@@ -86,5 +87,6 @@ namespace TargetingTestApp.Grammar
                 }
             }
         }
+        #endregion
     }
 }

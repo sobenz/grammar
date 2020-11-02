@@ -11,9 +11,10 @@ using TargetingTestApp.Evaluation;
 namespace TargetingTestApp.Grammar
 {
     /// <summary>
-    /// Grammar for generic top level targeting expressions. 
+    /// Grammar for generic top level targeting expressions. Only simple logic expressions are allowed at this level. More complex comparison operations
+    /// should be defined entirely in rules.
     /// </summary>
-    internal class TargetingExpressionGrammar : LogicalExpressionGrammar<OperatorExtensions.None, FunctionExtensions.None>
+    internal class TargetingExpressionGrammar : SimpleExpressionGrammar
     {
         private readonly IEnumerable<ICriterion> _criteria;
         private readonly IDictionary<Type, IRuleExpressionParser> _ruleParsers;
@@ -32,10 +33,7 @@ namespace TargetingTestApp.Grammar
 
         protected internal virtual Parser<Expression> TargetEvaluation => from targetRef in Parse.LetterOrDigit.AtLeastOnce().Text().Token()
                                                                          select BuildEvaluationForTargetReference(targetRef);
-        protected internal override Parser<Expression> Operand => (from lparen in Parse.Char('(')
-                                                                  from expression in Parse.Ref(() => BinaryOperation)
-                                                                  from rparen in Parse.Char(')')
-                                                                  select expression).Named("expression").Or(TargetEvaluation);
+        protected internal override Parser<Expression> ExpressionComponent => base.ExpressionComponent.Or(TargetEvaluation);
 
         protected internal override Parser<Expression> Lambda => BinaryOperation.End().Select(body => Expression.Lambda<Func<ITargetEvaluator, bool>>(body, _evaluator));
 

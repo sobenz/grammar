@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 namespace TargetingTestApp.Grammar
 {
     /// <summary>
-    /// Grammar for rules that are based on string properties.
+    /// Grammar for rules that are based on string properties. Additional operators for processing string data are also defined.
     /// </summary>
     internal class StringRuleExpressionGrammar : ParametizedExpressionGrammar<string, StringRuleExpressionGrammar.StringOperations, FunctionExtensions.None>, IRuleExpressionParser
     {
@@ -16,6 +16,10 @@ namespace TargetingTestApp.Grammar
 
         public Type RuleParameterType => typeof(string);
 
+        #region Custom String Operators
+        /// <summary>
+        /// Extension Operators for Rules that operator on String Data
+        /// </summary>
         public class StringOperations : OperatorExtensions
         {
             private static readonly ConcurrentDictionary<string, Regex> _regexMatches = new ConcurrentDictionary<string, Regex>();
@@ -65,5 +69,6 @@ namespace TargetingTestApp.Grammar
                 return regex.IsMatch(source);
             }
         }
+        #endregion
     }
 }

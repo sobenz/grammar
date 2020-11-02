@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using TargetingTestApp.Consumer;
 using TargetingTestApp.Grammar;
@@ -22,6 +23,7 @@ namespace TargetingTestApp.Evaluation
 
         public object GetRuleTarget(string target)
         {
+            IEnumerable<ConsumerEvent> events = null;
             switch (target)
             {
                 case "Age":
@@ -34,6 +36,35 @@ namespace TargetingTestApp.Evaluation
                 case "Name":
                     Console.WriteLine($"Extracting name:{_consumer.Name}");
                     return _consumer.Name;
+                case "CurrentMarket":
+                    Console.WriteLine($"Extracting market:{_consumer.CurrentMarket}");
+                    return _consumer.CurrentMarket;
+                case "Gender":
+                    Console.WriteLine($"Extracting gender:{_consumer.Gender}");
+                    return _consumer.Gender.ToString();
+                case "RegistrationDate":
+                    Console.WriteLine($"Extracting name:{_consumer.RegistrationDate}");
+                    return _consumer.RegistrationDate;
+                case "Redemptions":
+                    events = _consumer.ConsumerEvents.Where(e => e.EventType == ConsumerEventType.Redemption);
+                    Console.WriteLine($"Extracting Redemption events:{events.Count()}");
+                    return events;
+                case "AppStarts":
+                    events = _consumer.ConsumerEvents.Where(e => e.EventType == ConsumerEventType.AppStart);
+                    Console.WriteLine($"Extracting AppStart events:{events.Count()}");
+                    return events;
+                case "PointSpend":
+                    events = _consumer.ConsumerEvents.Where(e => e.EventType == ConsumerEventType.PointsSpend);
+                    Console.WriteLine($"Extracting PointsSpend events:{events.Count()}");
+                    return events;
+                case "ProductPurchase":
+                    events = _consumer.ConsumerEvents.Where(e => e.EventType == ConsumerEventType.ProductPurchase);
+                    Console.WriteLine($"Extracting ProductPurchase events:{events.Count()}");
+                    return events;
+                case "Rewards":
+                    events = _consumer.ConsumerEvents.Where(e => e.EventType == ConsumerEventType.RewardActivation);
+                    Console.WriteLine($"Extracting RewardActivation events:{events.Count()}");
+                    return events;
                 default:
                     throw new TargetExpressionException("target", "Invalid Rule");
             }
